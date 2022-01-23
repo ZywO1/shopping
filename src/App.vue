@@ -9,17 +9,20 @@
 </template>
 
 <script>
-
-import Header from './components/Header'
-import Footer from './components/Footer'
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Header,Footer
-  }
-}
+    Header,
+    Footer,
+  },
+  mounted() {
+    //通知Vuex发送请求，获取商品三级分类的数据
+    this.$store.dispatch("categoryList");
+  },
+};
 </script>
 
 <style>
-
 </style>

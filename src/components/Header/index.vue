@@ -39,7 +39,11 @@
             class="input-error input-xxlarge"
             v-model="searchKeyword"
           />
-          <button class="sui-btn btn-xlarge btn-danger" type="button" @click="goSearch">
+          <button
+            class="sui-btn btn-xlarge btn-danger"
+            type="button"
+            @click="goSearch"
+          >
             搜索
           </button>
         </form>
@@ -50,18 +54,25 @@
 
 <script>
 export default {
-    name:"Header",
-    data() {
-      return {
-        searchKeyword:''
+  name: "Header",
+  data() {
+    return {
+      searchKeyword: "",
+    };
+  },
+  methods: {
+    //编程式导航进入搜索
+    goSearch() {
+      let location = {
+        name: "search",
+        params: { keyword: this.searchKeyword || undefined },
+      };
+      if (this.$route.query) {
+        location.query = this.$route.query;
       }
+      this.$router.push(location);
     },
-    methods:{
-      //编程式导航进入搜索
-      goSearch(){
-        this.$router.push('/search/'+this.searchKeyword)
-      }
-    }
+  },
 };
 </script>
 

@@ -1,53 +1,56 @@
 <template>
   <div class="type-nav">
     <div class="container">
-      <div @mouseleave="currentIndex = -1">
+      <div @mouseleave="leaveEvent" @mouseenter="showNav">
         <h2 class="all">全部商品分类</h2>
-        <div class="sort">
-          <!-- 利用时间委派+编程式导航实现路由跳转 -->
-          <div class="all-sort-list2" @click="goSearch">
-            <div
-              class="item"
-              v-for="(c1, index) in categoryList.slice(0, 16)"
-              :key="c1.categoryId"
-              :class="{ cur: currentIndex == index }"
-            >
-              <h3 @mouseenter="changeIndex(index)">
-                <a
-                  :data-categoryName="c1.categoryName"
-                  :data-category1Id="c1.categoryId"
-                  >{{ c1.categoryName }}</a
-                >
-              </h3>
-              <div class="item-list clearfix">
-                <div
-                  class="subitem"
-                  v-for="c2 in c1.categoryChild"
-                  :key="c2.categoryId"
-                >
-                  <dl class="fore">
-                    <dt>
-                      <a
-                        :data-categoryName="c2.categoryName"
-                        :data-category2Id="c2.categoryId"
-                        >{{ c2.categoryName }}</a
-                      >
-                    </dt>
-                    <dd>
-                      <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+        <!-- 添加过渡动画 -->
+        <transition name="sort">
+          <div class="sort" v-show="isShow">
+            <!-- 利用时间委派+编程式导航实现路由跳转 -->
+            <div class="all-sort-list2" @click="goSearch">
+              <div
+                class="item"
+                v-for="(c1, index) in categoryList.slice(0, 16)"
+                :key="c1.categoryId"
+                :class="{ cur: currentIndex == index }"
+              >
+                <h3 @mouseenter="changeIndex(index)">
+                  <a
+                    :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId"
+                    >{{ c1.categoryName }}</a
+                  >
+                </h3>
+                <div class="item-list clearfix">
+                  <div
+                    class="subitem"
+                    v-for="c2 in c1.categoryChild"
+                    :key="c2.categoryId"
+                  >
+                    <dl class="fore">
+                      <dt>
                         <a
-                          :data-categoryName="c3.categoryName"
-                          :data-category3Id="c3.categoryId"
-                          >{{ c3.categoryName }}</a
+                          :data-categoryName="c2.categoryName"
+                          :data-category2Id="c2.categoryId"
+                          >{{ c2.categoryName }}</a
                         >
-                      </em>
-                    </dd>
-                  </dl>
+                      </dt>
+                      <dd>
+                        <em v-for="c3 in c2.categoryChild" :key="c3.categoryId">
+                          <a
+                            :data-categoryName="c3.categoryName"
+                            :data-category3Id="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -73,6 +76,7 @@ export default {
   data() {
     return {
       currentIndex: -1,
+      isShow: true,
     };
   },
   methods: {
@@ -84,26 +88,41 @@ export default {
     goSearch(event) {
       //点击目标存在a标签
       let element = event.target;
-      let { categoryname,category1id,category2id,category3id } = element.dataset;
+      let { categoryname, category1id, category2id, category3id } =
+        element.dataset;
       if (categoryname) {
-        let location={name:"search"}
-        let query={categoryName:categoryname}
-        if(category1id){
-          query.category1Id=category1id
-        }else if(category2id){
-          query.category2Id=category2id
-        }else{
-          query.category3Id=category3id
+        let location = { name: "search" };
+        let query = { categoryName: categoryname };
+        if (category1id) {
+          query.category1Id = category1id;
+        } else if (category2id) {
+          query.category2Id = category2id;
+        } else {
+          query.category3Id = category3id;
         }
-        location.query=query
+        location.query = query;
+        if (this.$route.params) {
+          location.params = this.$route.params;
+        }
         //路由跳转
-        this.$router.push(location)
+        this.$router.push(location);
+      }
+    },
+    showNav() {
+      this.isShow = true;
+    },
+    leaveEvent() {
+      this.currentIndex = -1;
+      if (this.$route.path != "/home") {
+        this.isShow = false;
       }
     },
   },
   mounted() {
-    //通知Vuex发送请求，获取数据
-    this.$store.dispatch("categoryList");
+    //如果不是Search路由组件，则将三级联动隐藏
+    if (this.$route.path != "/home") {
+      this.isShow = false;
+    }
   },
   computed: {
     ...mapState({
@@ -233,6 +252,17 @@ export default {
           background-color: skyblue;
         }
       }
+    }
+
+    //过渡动画样式
+    .sort-enter {
+      height: 0px;
+    }
+    .sort-enter-to {
+      height: 461px;
+    }
+    .sort-enter-active {
+      transition: all 0.1s linear;
     }
   }
 }
