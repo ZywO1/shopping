@@ -2,13 +2,10 @@
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import routes from './routers'
 //使用插件
 Vue.use(VueRouter)
-    //引入路由
-import Home from '@/pages/Home'
-import Search from '@/pages/Search'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
+
 
 //重写push|replace，消除一个警告
 let originPush = VueRouter.prototype.push
@@ -32,31 +29,8 @@ VueRouter.prototype.replace = function(location, resolve, reject) {
 //配置路由
 export default new VueRouter({
     //引入配置路由
-    routes: [{
-            path: '/home',
-            component: Home,
-            meta: { showFooter: true }
-        },
-        {
-            name: 'search',
-            path: '/search/:keyword?',
-            component: Search,
-            meta: { showFooter: true }
-        },
-        {
-            path: '/login',
-            component: Login,
-            meta: { showFooter: false }
-        },
-        {
-            path: '/register',
-            component: Register,
-            meta: { showFooter: false }
-        },
-        //重定向,默认是在首页
-        {
-            path: '*',
-            redirect: '/home'
-        }
-    ]
+    routes,
+    scrollBehavior (to, from, savedPosition) {
+        return {  y: 0 }
+      }
 })
