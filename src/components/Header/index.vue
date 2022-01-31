@@ -5,11 +5,15 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="!userName">
             <span>请</span>
             <!-- 声明式导航跳转 -->
             <router-link to="/login">登录</router-link>
             <router-link to="/register" class="register">免费注册</router-link>
+          </p>
+          <p v-else>
+            <a>{{userName}}</a>
+            <a class="register" @click="logout">退出登录</a>
           </p>
         </div>
         <div class="typeList">
@@ -72,6 +76,16 @@ export default {
       }
       this.$router.push(location);
     },
+    //退出登录
+    async logout(){
+      //成功则返回首页
+      try {
+        await this.$store.dispatch("userLogout")
+        this.$router.push('/home')
+      } catch (error) {
+        alert("error.message")
+      }
+    }
   },
   mounted() {
     //通过全局时间总线清除关键字
@@ -79,6 +93,11 @@ export default {
       this.searchKeyword=""
     })
   },
+  computed:{
+    userName(){
+      return this.$store.state.user.userInfo.name
+    }
+  }
 };
 </script>
 

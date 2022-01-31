@@ -15,9 +15,12 @@ const requests = axios.create({
 
 //请求拦截器，在发送请求之前，请求拦截器可以检测到，可以在请求前完成某些事务
 requests.interceptors.request.use((config) => {
-    if(store.state.detail.uuid_token){
+    if (store.state.detail.uuid_token) {
         //请求头添加字段
-        config.headers.userTempId=store.state.detail.uuid_token
+        config.headers.userTempId = store.state.detail.uuid_token
+    }
+    if (store.state.user.token) {
+        config.headers.token = store.state.user.token
     }
     //进度条开始
     nprogress.start()

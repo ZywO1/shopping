@@ -25,3 +25,19 @@ export const reqGetCode=(phone)=>requests({url:`/user/passport/sendCode/${phone}
 export const reqUserRegister=(userdata)=>requests({url:'/user/passport/register',data:userdata,method:'post'})
 //登录
 export const reqUserLogin=(data)=>requests({url:'/user/passport/login',data,method:'post'})
+//通过token获取用户信息
+export const reqUserInfo=()=>requests({url:'/user/passport/auth/getUserInfo',method:'get'})
+//退出登录
+export const reqLogout=()=>requests({url:'/user/passport/logout',method:'get'})
+//获取用户地址
+export const reqAddressInfo=()=>requests({url:"/user/userAddress/auth/findUserAddressList",method:"get"})
+//获取结算商品信息
+export const reqOrderInfo=()=>requests({url:"/order/auth/trade",method:"get"})
+//提交订单
+export const reqSubmitOrder=(tradeNo,data)=>requests({url:`/order/auth/submitOrder?tradeNo=${tradeNo}`,data,method:'post'})
+//获取支付信息
+export const reqPayInfo=(orderId)=>requests({url:`payment/weixin/createNative/${orderId}`,method:'get'})
+//获取支付订单信息
+export const reqPayStatus=(orderId)=>requests({url:`/payment/weixin/queryPayStatus/${orderId}`,method:'get'})
+//获取个人订单
+export const reqMyOrderList=(page,limit)=>requests({url:`/order/auth/${page}/${limit}`,method:'get'})
