@@ -23,6 +23,11 @@ Vue.component(Button.name,Button)
 Vue.prototype.$msgbox=MessageBox
 Vue.prototype.$alert=MessageBox.alert
 
+//引入图片懒加载
+import VueLazyload from 'vue-lazyload'
+Vue.use(VueLazyload)
+//引入表单校验插件
+import '@/plugins/validate'
 new Vue({
     render: h => h(App),
     //全局事件总线：

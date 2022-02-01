@@ -10,20 +10,20 @@ Vue.use(VueRouter)
 
 //重写push|replace，消除一个警告
 let originPush = VueRouter.prototype.push
-VueRouter.prototype.push = function(location, resolve, reject) {
+VueRouter.prototype.push = function (location, resolve, reject) {
     if (resolve && reject) {
         originPush.call(this, location, resolve, reject)
     } else {
-        originPush.call(this, location, () => {}, () => {})
+        originPush.call(this, location, () => { }, () => { })
     }
 }
 
 let originReplace = VueRouter.prototype.replace
-VueRouter.prototype.replace = function(location, resolve, reject) {
+VueRouter.prototype.replace = function (location, resolve, reject) {
     if (resolve && reject) {
         originReplace.call(this, location, resolve, reject)
     } else {
-        originReplace.call(this, location, () => {}, () => {})
+        originReplace.call(this, location, () => { }, () => { })
     }
 }
 
@@ -31,21 +31,22 @@ VueRouter.prototype.replace = function(location, resolve, reject) {
 let router = new VueRouter({
     //引入配置路由
     routes,
-    scrollBehavior (to, from, savedPosition) {
-        return {  y: 0 }
-      }
+    scrollBehavior(to, from, savedPosition) {
+        return { y: 0 }
+    }
 })
 
-router.beforeEach(async (to,from,next)=>{
-    let token=store.state.user.token
-    let name=store.state.user.userInfo.name
-    if(token){
-        if(to.path=='/login'||to.path=="/register"){
+router.beforeEach(async (to, from, next) => {
+    let token = store.state.user.token
+    let name = store.state.user.userInfo.name
+    if (token) {
+        //用户已登录
+        if (to.path == '/login' || to.path == "/register") {
             next('/home')
-        }else{
-            if(name){
+        } else {
+            if (name) {
                 next()
-            }else{
+            } else {
                 try {
                     await store.dispatch('getUserInfo')
                     next()
@@ -56,8 +57,14 @@ router.beforeEach(async (to,from,next)=>{
                 }
             }
         }
-    }else{
-        next()
+    } else {
+        //用户未登录
+        let toPath = to.path
+        if (toPath.indexOf('/trade') != -1 || toPath.indexOf('/pay') != -1 || toPath.indexOf('/center') != -1) {
+            next('/login?redirect=' + toPath)
+        } else {
+            next()
+        }
     }
 })
 
